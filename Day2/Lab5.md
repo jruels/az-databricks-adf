@@ -83,6 +83,7 @@ The goal is to:
 #### 2. **Create Datasets**
 1. **Blob Storage Dataset** (Source):
    - Go to **Author > Datasets > New Dataset**.
+   - Select **Azure Blob Storage**
    - Select **Delimited Text**.
    - Link it to your Blob Storage linked service.
    - You will have to configure a dataset and the file paths for `happiness.csv` and `population.csv`.
