@@ -87,6 +87,7 @@ The goal is to:
    - Select **Delimited Text**.
    - Link it to your Blob Storage linked service.
    - You will have to configure a dataset and the file paths for `happiness.csv` and `population.csv`.
+   - Schema > Import schema > From connection/store
 
 2. **PostgreSQL Dataset** (Sink):
    - Go to **Author > Datasets > New Dataset**.
