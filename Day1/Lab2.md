@@ -12,7 +12,7 @@ Create a simple Azure Data Factory pipeline that copies data from an Azure Stora
    - In the Azure portal, search for "Storage accounts," select "+ Create," use the same resource group from Lab1, and provide a unique name.  
    - Choose region/replication, then click "Review + Create" → "Create."  
    - Click "Go to Resource" to navigate to the storage account.
-   - Go to "Data storage" then click on "Containers". Create a container (e.g., "inputcontainer") to store the data file (CSV or JSON).
+   - Go to "Data storage" then click on "Containers". Create a container (e.g., "inputcontainer") to store the data file (CSV or JSON). 
    - Create a new csv file `lab2data.csv ` and paste the following text:
 ```csv
 id,name,value
@@ -52,13 +52,16 @@ id,name,value
    - Search for " Azure Database for PostgreSQL Flexible server," select "+ Create" and choose "Single server" (or "Flexible server").  
    - Assign the same resource group from Lab1, provide server name, admin username, password, location, and pricing tier.  
    - Select "PostgreSQL authentication only" for Authentication method
-   - After creation, enable access by configuring firewall rules under "Connection security."
+   - Go to the Networking tab and Allow public access, add your current client IP address to the firewall
+   - After creation, you can also enable access by configuring firewall rules under "Connection security."
+   - **The process can take several minutes so please be patient** If the server takes way too long to create, try recreating it in a different Azure Region.
    - Click "Go to Resource" to open the database overview page
-   - Click on Connect and choose a connect method, for this exercise you can select pgAdmin 4 and follow the instructions. (You can download and install pgAdmin from this url: https://www.pgadmin.org/download/)
+   - Click on Connect under the Settings menu and choose a connection method, for this exercise you can select pgAdmin 4 and follow the instructions to register your server locally in pgAdmin 4. (You can download and install pgAdmin from this url: https://www.pgadmin.org/download/)
 
 3. **Prepopulate the Database with Example Data:**
+   - Expand your server under Servcers in pgAdmin 4
    - Right click databases then click "Create" → "Database"
-   - Give the database a name e.g. "lab2db"  
+   - Give the database a name e.g. "lab2db" and click on "Save"
    - Right click the database you created above and click "Query Tool"
    - Paste the code below to create a new table
      ```sql
@@ -72,6 +75,10 @@ id,name,value
      ```sql
      INSERT INTO public.sample_data (name, value)
      VALUES ('Test1', 123), ('Test2', 456);
+     ```
+   - Delete the rows from the table to prepare for the next exercise
+     ```sql
+     DELETE FROM public.sample_data
      ```
 
 4. **Open ADF Studio:**
@@ -88,7 +95,7 @@ id,name,value
    - **Source**: Create/select a linked service pointing to your storage account and a dataset referencing your input file. 
    - To create a new linked service, click "+ New" in the Source tab
    - Select Azure Blob Storage from the data store options and press Continue
-   - Choose Excel for the data format
+   - Choose DelimitedText for the data format
    - Click "+ New" under linked service
    - Give the linked service a name for example "AzureBlobStorageSource"
    - Select the subscription containing your storage account
@@ -101,6 +108,7 @@ id,name,value
    - Select "Azure Database for PostgreSQL"
    - Click "+ New" under linked service
    - Select name of the server you created in Step 2 above
+   - Select the `lab2db` that you created in Step 2
    - Enter your server user name and password
    - Select SSL as encyption method
    - Click on test connection
@@ -113,9 +121,13 @@ id,name,value
 
 8. **Publish Changes:**
    - Click "Publish all" to save and deploy the pipeline.
+   - CLick on **Debug** to test your pipeline
 
 **Expected Output:**
-Your pipeline copies data from the storage file into the Azure Database for PostgreSQL table.
+Your pipeline copies data from the storage file into the Azure Database for PostgreSQL table. You can verify the output by running the following command in pgAdmin 4:
+```sql
+SELECT * FROM public.sample_data
+```
 
 **Troubleshooting:**
 * Verify firewall settings for PostgreSQL.
