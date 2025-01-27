@@ -121,13 +121,6 @@ id,name,value
 
 8. **Publish Changes:**
    - Click "Publish all" to save and deploy the pipeline.
-   - CLick on **Debug** to test your pipeline
-
-**Expected Output:**
-Your pipeline copies data from the storage file into the Azure Database for PostgreSQL table. You can verify the output by running the following command in pgAdmin 4:
-```sql
-SELECT * FROM public.sample_data
-```
 
 **Troubleshooting:**
 * Verify firewall settings for PostgreSQL.
