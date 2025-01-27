@@ -18,6 +18,11 @@ The objective of this lab is to run the pipeline created in Lab 2 and monitor it
 **Expected Output:**
 You will have run the pipeline successfully. You will be able to see the successful execution of the pipeline and activity runs in the monitoring tab. And you can also see that the data was moved successfully from the source to destination.
 
+Your pipeline copies data from the storage file into the Azure Database for PostgreSQL table. You can verify the output by running the following command in pgAdmin 4:
+```sql
+SELECT * FROM public.sample_data
+```
+
 **Troubleshooting:**
 *   **Pipeline Run Failure:** Check the error messages in the pipeline runs to identify issues and troubleshoot the failure, you can also look at the activity run details.
 *   **Activity Failures:** Check activity details for configuration issues or connection issues and use the detailed logs for debugging.
