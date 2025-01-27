@@ -1,29 +1,26 @@
 # Lab 1 to 3 Using Python Notebooks
 
 Below are detailed instructions to replicate Labs 1, 2, and 3 via Python notebooks instead of the Azure Portal. This approach uses:
-- Python 3+  
-- Azure CLI (invoked from a notebook)  
+- Python 3+ (You can check if Python is installed by running `python --version` in Powershell)
+- Azure CLI (invoked from a notebook)  (You can check if it's installed by running `az --version`)
 - Jupyter or any IPython-based environment  
 
-> **Tip:** If you do not have Python or Jupyter installed, see [Python Downloads](https://www.python.org/downloads/) and install Jupyter via `pip install jupyter`.
+> **Tip:** If you do not have Python or Jupyter installed, see [Python Downloads](https://www.python.org/downloads/) and install Jupyter via `pip install jupyter` Make sure to add python to the PATH environment variable during installation.
 
 ---
 ## 1. Set Up Your Development Environment
 
-```python
-# filepath: /Labs/Day1/ADF_Full_Labs.ipynb
 
+1. Download and install the [Azure CLI](https://azcliprod.blob.core.windows.net/msi/azure-cli-2.64.0-x64.msi)
+2. Open a terminal (on Windows, “Command Prompt” or “PowerShell”).  
+
+```bash
 # Install Azure CLI (if not already installed)
-!pip install azure-cli
-# Optionally install Azure CLI interactive extension
-!az extension add --name interactive
+pip install azure-cli
 
 # (Re)Login to Azure
-!az login
+az login
 ```
-1. Open a terminal (on Windows, “Command Prompt” or “PowerShell”).  
-2. Run `jupyter notebook` or open your notebook in VS Code.  
-3. Copy the lines above into a notebook cell and run it.
 
 ---
 
@@ -33,24 +30,27 @@ Below are detailed instructions to replicate Labs 1, 2, and 3 via Python noteboo
 
 1. **Create Resource Group**  
    Replace `<your-name>`, `<location>`, and `<subscription-id>` as needed:
-   ```python
+   ```bash
    # Create resource group
-   !az group create --name rg-adf-<your-name> --location <location> --subscription <subscription-id>
+   $env:resourceGroup="rg-adf-<your-name>"
+   $env:location="<location>"
+   $env:subscriptionId:"<subscription-id>"
+   $env:datafactory="<data-factory-name>"
+   az group create --name $env:resourceGroup --location $env:location --subscription $env:subscriptionId
    ```
 
-2. **Create Data Factory**  
+2. **Create Data Factory**
+   The name of your data factory resource must be globally unique.
+   When prompted to install the data factory extension, type **y** to continue
    ```python
    # Create ADF instance
-   !az datafactory create \
-       --resource-group rg-adf-<your-name> \
-       --factory-name <your-adf-name> \
-       --location <location>
+   az datafactory create --resource-group $env:resourceGroup --factory-name $env:datafactory --location $env:location
    ```
 
-3. **Verify Creation**  
-   ```python
+4. **Verify Creation**  
+   ```bash
    # List all Data Factories in the resource group
-   !az datafactory list --resource-group rg-adf-<your-name>
+   az datafactory list --resource-group $env:resourceGroup
    ```
 
 ---
@@ -60,31 +60,36 @@ Below are detailed instructions to replicate Labs 1, 2, and 3 via Python noteboo
 **Objective:** Provision Azure Database for PostgreSQL, create a Storage account, upload CSV, and connect them via a pipeline.
 
 ### 2.1 Create a Storage Account
-```python
-# Create a storage account
-!az storage account create \
-    --resource-group rg-adf-<your-name> \
-    --name <uniqueStorageAccountName> \
-    --location <location> \
-    --sku Standard_LRS
+```bash
+# Create a globally  unique storage account
+$env:storageAccount="<replace-with-storage-account-name>"
+az storage account create --resource-group $env:resourceGroup --name $env:storageAccount --location $env:location --sku Standard_LRS
 ```
 
 ### 2.2 Create Container & Upload CSV
 ```python
 # Create a container
-!az storage container create \
-    --account-name <uniqueStorageAccountName> \
-    --name inputcontainer
+az storage container create --account-name $env:storageAccount --name inputcontainer
 
 # Upload lab2data.csv
-!az storage blob upload \
-    --account-name <uniqueStorageAccountName> \
-    --container-name inputcontainer \
-    --name lab2data.csv \
-    --file c:/path/to/lab2data.csv
+az storage blob upload --account-name $env:storageAccount --container-name inputcontainer --name lab2data.csv --file 'c:/path/to/lab2data.csv'
 ```
 
 ### 2.3 Create Azure Database for PostgreSQL
+
+With PowerShell, you must ensure Get-ExecutionPolicy is not Restricted. We suggest using Bypass to bypass the policy to get things installed or AllSigned for quite a bit more security.
+
+Run `Get-ExecutionPolicy`. If it returns Restricted, then run `Set-ExecutionPolicy AllSigned` or `Set-ExecutionPolicy Bypass -Scope Process`.
+
+Run the following command to install chocolatey:
+```bash
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+```
+
+Run the following command to install `psql`:
+```bash
+choco install postgresql
+```
 
 Use the CLI parameters to specify configuration details for the PostgreSQL flexible server:
 
@@ -105,31 +110,35 @@ Use the CLI parameters to specify configuration details for the PostgreSQL flexi
 
 You can learn more about the parameters here: https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/quickstart-create-server?tabs=cli-create-flexible%2Cportal-get-connection%2Cportal-delete-resources
 
-```python
-# Create Azure Database for PostgreSQL flexible server
-!az postgres flexible-server create --subscription <subscription> --resource-group rg-adf-<your-name> --name <name> --location <region> --version <version> --zone <zone> --password-auth <password-auth> --admin-user <admin-user> --admin-password <admin-password> --tier <tier> --sku-name <sku-name> --storage-type <storage-type> --storage-size <storage-size> --performance-tier <performance-tier> --storage-auto-grow <storage-auto-grow> --high-availability <high-availability> --standby-zone <standby-zone> --backup-retention <backup-retention> --geo-redundant-backup <geo-redundant-backup> --public-access <public-access> --tags <tags>
-```
+When prompted to add your client IP address, type **y**:
+`Detected current client IP : 20.83.210.238
+Do you want to enable access to client 20.83.210.238 (y/n):`
 
-Configure firewall to allow Azure services and your client IP:
-```python
-!az postgres flexible-server firewall-rule create \
-    --resource-group rg-adf-<your-name> \
-    --name <your-postgres-server> \
-    --rule-name AllowAll \
-    --start-ip-address 0.0.0.0 \
-    --end-ip-address 255.255.255.255
+```bash
+# Create Azure Database for PostgreSQL flexible server
+$env:postgresServer="<your-postgres-server>"
+$env:adminUser="<admin-user>"
+$env:adminPassword="<admin-password>"
+$env:postgresVersion="16"
+$env:postgresTier="GeneralPurpose"
+$env:postgresSku="Standard_D2s_v3"
+$env:postgresStorage="128"
+
+az postgres flexible-server create --subscription $env:subscriptionId --resource-group $env:resourceGroup --name $env:postgresServer --location $env:location --version $env:postgresVersion --admin-user $env:adminUser --admin-password $env:adminPassword --tier $env:postgresTier --sku-name $env:postgresSku --storage-size $env:postgresStorage
+
 ```
+Copy the text from the command output and save it somewhwere. 
 
 ### 2.4 Create Table and Insert Example Data
 Use a local PostgreSQL client or psql from the notebook (install psql or use Python drivers), for example:
-```python
+```bash
 # Example using psql if installed locally: 
-!psql "sslmode=require host=<your-postgres-server>.postgres.database.azure.com user=<admin-user> password=<admin-password> dbname=postgres" -c "CREATE TABLE public.sample_data (id SERIAL PRIMARY KEY, name VARCHAR(100), value INT);"
+psql "sslmode=require host=$env:postgresServer.postgres.database.azure.com user=$env:adminUser password=$env:adminPassword dbname=postgres" -c "CREATE TABLE public.sample_data (id SERIAL PRIMARY KEY, name VARCHAR(100), value INT);"
 
 ```
-```python
+```bash
 # Insert data rows
-!psql "sslmode=require host=<your-postgres-server>.postgres.database.azure.com user=<admin-user> password=<admin-password> dbname=postgres" -c "INSERT INTO public.sample_data(name, value) VALUES ('Test1',123),('Test2',456);"
+psql "sslmode=require host=$env:postgresServer.postgres.database.azure.com user=$env:adminUser password=$env:adminPassword dbname=postgres" -c "INSERT INTO public.sample_data(name, value) VALUES ('Test1',123),('Test2',456);"
 ```
 
 ### 2.5 Create Pipeline using Python SDK
@@ -142,18 +151,24 @@ Use a local PostgreSQL client or psql from the notebook (install psql or use Pyt
 
 **Python Package Installation**
 
-First, ensure you have the necessary Azure Python SDK packages installed:
+First, ensure you have the necessary Azure Python SDK packages and Azure Developer CLI installed by running the following command in the terminal:
 
 ```python
-!pip install azure-mgmt-datafactory azure-identity
+pip install azure-mgmt-datafactory azure-identity
+winget install microsoft.azd
 ```
 
 **Lab 2.5 - Create Pipeline in ADF (Programmatically)**
 
 This section will replace the manual steps in the original lab instructions with Python code to create a pipeline within ADF.
 
+1. Open a terminal (on Windows, “Command Prompt” or “PowerShell”).  
+2. Run `jupyter notebook` or open your notebook in VS Code.
+3. Create a new Notebook and give it a name
+4. Add the code below to your notebook cells
+
 ```python
-from azure.identity import AzureCliCredential
+from azure.identity import DefaultAzureCredential
 from azure.mgmt.datafactory import DataFactoryManagementClient
 from azure.mgmt.datafactory.models import (
     LinkedServiceResource,
@@ -166,16 +181,14 @@ from azure.mgmt.datafactory.models import (
     PipelineResource,
     DatasetStorageFormat,
     DatasetCompression,
-    DatasetTextFormat,
     LinkedService,
     Dataset,
     Activity
     )
 import json
 
-
 # 1. Configure Credentials and Clients
-credential = AzureCliCredential()
+credential = DefaultAzureCredential()
 
 # Replace with your actual values
 subscription_id = "<subscription-id>"
@@ -262,34 +275,21 @@ ds_postgres = df_client.datasets.create_or_update(resource_group, factory_name, 
 print(f"postgres dataset created {ds_postgres.name}")
 
 # 4. Create Copy Activity
-copy_activity = Activity(
-        name = "CopyDataFromBlobToPostgres",
-        type = "Copy",
-        inputs = [Dataset(reference_name = "AzureBlobCSVDataset")],
-        outputs=[Dataset(reference_name = "AzurePostgreSqlDataset")],
-        type_properties = {
-            "source": {
-                "type": "DelimitedTextSource"
-             },
-             "sink": {
-                "type": "PostgreSqlSink",
-                 "writeBatchTimeout": "00:05:00",
-                 "writeBatchSize": 10000
-            }
-        }
+from azure.mgmt.datafactory.models import CopyActivity, PipelineResource, DatasetReference, DelimitedTextSource, AzurePostgreSqlSink,BlobSource
+copy_activity = CopyActivity(
+    name="CopyDataFromBlobToPostgres",
+    inputs=[DatasetReference(reference_name="AzureBlobCSVDataset",type="DatasetReference")],
+    outputs=[DatasetReference(reference_name="AzurePostgreSqlDataset",type="DatasetReference")],
+    source=DelimitedTextSource(),
+    sink=AzurePostgreSqlSink(write_batch_timeout="00:05:00", write_batch_size=10000)
 )
 
-
-# 5. Create Pipeline
-pipeline = PipelineResource(
-    properties = {
-        "activities": [copy_activity]
-    }
-)
-print("Creating Pipeline...")
-pipeline_result = df_client.pipelines.create_or_update(resource_group, factory_name, "PostgreSQLCopyPipeline", pipeline)
-print(f"Pipeline created {pipeline_result.name}")
-print("Pipeline creation complete.")
+# Create a pipeline with the copy activity
+pipeline_name = "copyPipeline"
+params_for_pipeline = {}
+pipeline_obj = PipelineResource(activities=[copy_activity], parameters=params_for_pipeline)
+pipeline = df_client.pipelines.create_or_update(resource_group, factory_name, pipeline_name, pipeline_obj)
+print(f"Pipeline created: {pipeline.name}")
 ```
 
 **Key Points and Explanations:**
