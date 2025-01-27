@@ -48,7 +48,6 @@ This lab includes detailed step-by-step instructions for creating the required A
    - Name: Provide a name (e.g., `ADF-Lab`).
    - Region: Same as your storage account.
 4. Click **Review + Create**, then **Create**.
-5. Once deployed, click **Launch Studio** to launch ADF Studio.
 
 #### **2.4 Create Azure Databricks Workspace**
 1. Open the Azure Portal and search for **Azure Databricks** in the search bar and click **+ Create**.
@@ -59,7 +58,9 @@ This lab includes detailed step-by-step instructions for creating the required A
    - Region: Same as other resources.
 3. Click **Review + Create**, then **Create**.
 4. Once deployed, go to the resource and click **Launch Workspace**.
-
+5. In the databricks workspace on the Compute tab click Create
+6. Set to Terminate after 60 minutes of inactivity
+7. Click Create compute
 ---
 
 ### **Step 3: Build the ADF Pipeline**
