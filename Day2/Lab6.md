@@ -119,7 +119,7 @@ This lab includes detailed step-by-step instructions for creating the required A
 3. Configure:
    - **Items**: Use the output from the **Lookup** activity:
      ```json
-     @activity('Lookup').output.value
+     @activity('Lookup1').output.value
      ```
    - **Condition**: Use the expression to filter rows with `Happiness_Score > 6`:
      ```json
