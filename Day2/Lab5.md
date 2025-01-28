@@ -11,11 +11,12 @@ This lab demonstrates how to transform a dataset stored in Azure Blob Storage us
 
 Before starting, ensure you:
 1. Have an [Azure account](https://azure.microsoft.com/free/).
-2. Lab Datasets
-3. Set up Azure resources:
+2. Completed labs 1 to 4
+3. Lab Datasets
+4. Set up Azure resources:
    - **Azure Blob Storage**: Upload the dataset.
    - **Azure Database for PostgreSQL**: Create a target table.
-4. Set up **Azure Data Factory**: Create an ADF instance.
+5. Set up **Azure Data Factory**: Create an ADF instance.
 
 ---
 
@@ -78,7 +79,7 @@ The goal is to:
    - **Blob Storage**:
      - Select **Azure Blob Storage** and authenticate with your Storage Account containing the happiness and population csv files. Remember to give your linked service a unique name.
    - **PostgreSQL**:
-     - Select **Azure Database for PostgreSQL** and provide server details (host, username, password, database). Remember to give your linked service a unique name.
+     - Click on `+ New` then select **Azure Database for PostgreSQL** and provide server details (host, username, password, database). Remember to give your linked service a unique name. DO NOT FORGET TO SELECT SSL FOR ENCRYPTION METHOD.
 
 #### 2. **Create Datasets**
 1. **Blob Storage Dataset** (Source):
@@ -86,14 +87,16 @@ The goal is to:
    - Select **Azure Blob Storage**
    - Select **Delimited Text**.
    - Link it to your Blob Storage linked service.
-   - You will have to configure a dataset and the file paths for `happiness.csv` and `population.csv`.
+   - Configure a dataset and the file paths for `happiness.csv` and name it `HappinessDataset`.
    - Schema > Import schema > From connection/store
+   - Repeat the process for `population.csv` and name `PopulationDataset`.
 
 2. **PostgreSQL Dataset** (Sink):
    - Go to **Author > Datasets > New Dataset**.
    - Select **Azure Database for PostgreSQL Table**.
    - Link it to your PostgreSQL linked service.
    - Select the `transformed_data` table.
+   - name the dataset `TransformedDataset`.
 
 ---
 
@@ -102,12 +105,13 @@ The goal is to:
 #### 1. **Create a Data Flow**
 1. Go to **Author > Data Flows > New Data Flow**.
 2. Name it `TransformDataFlow`.
+3. Enable `Data Flow Debug` so that you can test the data flow and preview the output of each step.
 
 ---
 
 #### 2. **Add a Source for Happiness Data**
 1. Add a **Source** onto the canvas and configure:
-   - **Source Dataset**: Select the `happiness.csv` dataset.
+   - **Source Dataset**: Select the `HappinessDataset` dataset.
    - **Projection**: Allow schema inference or manually define columns.
 2. Rename the source as `HappinessData`.
 
@@ -115,7 +119,7 @@ The goal is to:
 
 #### 3. **Add a Source for Population Data**
 1. Add another **Source** onto the canvas and configure:
-   - **Source Dataset**: Select the `population.csv` dataset.
+   - **Source Dataset**: Select the `population.csv` dataset `PopulationDataset`
    - **Projection**: Define columns like `Country`, `Year`, and `Population`.
 2. Rename the source as `PopulationData`.
 
@@ -126,7 +130,7 @@ The goal is to:
    - Click the "+" on the `HappinessData` and add a **Filter** onto the canvas.
    - Configure the condition:
      ``` 
-     Year == "2021"
+     Year == 2021
      ```
    - Rename it to `FilteredHappiness`.
 
@@ -134,7 +138,7 @@ The goal is to:
 
 #### 5. **Join the Data**
 1. Add a **Join** transformation onto the canvas and connect it to `FilteredHappiness` as the Left Stream and `PopulationData` as the Right Stream.
-2. 
+2. You can a a transformation by clicking the "+" button on the `FilteredHappiness` filter.
 3. Configure the join:
    - **Join Condition**: Match `Country` in both datasets.
    - **Join Type**: Inner join.
@@ -143,7 +147,7 @@ The goal is to:
 ---
 
 #### 6. **Aggregate Data**
-1. Add a **Cast** transformation to the `JoinedData` transformation to convert the Happiness_Score and Population columns to numerical values
+1. Add a **Cast** transformation to the `JoinedData` transformation to convert the Happiness_Score and Population columns to the float and integer data types respectively.
 2. Add an **Aggregate** transformation:
    - Connect it to `JoinedData`.
    - Configure the aggregations:
@@ -172,19 +176,21 @@ You can preview the output data for each transformation by enabling the `Data fl
 ### **Part 5: Build the Pipeline**
 
 1. Create a new **Pipeline** and drag the `TransformDataFlow` onto the canvas.
-2. Configure the pipeline parameters (e.g., file paths, year).
-3. Validate the pipeline to ensure there are no errors.
+2. Validate the pipeline to ensure there are no errors.
+3. Click Publish All
 
 ---
 
 ### **Part 6: Run, Monitor, and Verify**
 
 #### 1. **Run the Pipeline**
-1. Trigger the pipeline with **Trigger Now**.
+1. Trigger the pipeline by clicking **+ Add Trigger** -> **Trigger Now**.
 2. Monitor the run in the **Monitor** tab.
 
 #### 2. **Verify the Data**
-1. Query the `transformed_data` table in PostgreSQL to verify the results:
+1. Open the `analytics` database using pgAdmin 4 or a PostgresSQL admin tool of choice
+2. Open the query tool then,
+3. Query the `transformed_data` table in PostgreSQL to verify the results:
    ```sql
    SELECT * FROM transformed_data;
    ```
