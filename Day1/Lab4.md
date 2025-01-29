@@ -34,10 +34,11 @@ az login
    # Create resource group
    $env:resourceGroup="rg-adf-<your-name>"
    $env:location="<location>"
-   $env:subscriptionId:"<subscription-id>"
+   $env:subscriptionId=az account show --query id --output tsv
    $env:datafactory="<data-factory-name>"
    az group create --name $env:resourceGroup --location $env:location --subscription $env:subscriptionId
    ```
+
 
 2. **Create Data Factory**
    The name of your data factory resource must be globally unique.
