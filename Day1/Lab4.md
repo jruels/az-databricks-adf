@@ -91,26 +91,6 @@ Run the following command to install `psql`:
 ```bash
 choco install postgresql
 ```
-
-Use the CLI parameters to specify configuration details for the PostgreSQL flexible server:
-
-- subscription: Sets which Azure subscription to use.
-- resource-group: Specifies the resource group for the new server.
-- name: Gives the server a unique name.
-- location: Chooses the Azure region.
-- version: Defines the PostgreSQL version.
-- zone: Selects the availability zone.
-- password-auth: Enables password-based authentication.
-- admin-user / admin-password: Sets admin credentials for the server.
-- tier / sku-name: Chooses the pricing tier and compute size.
-- storage-type / storage-size: Picks the storage type and size.
-- performance-tier: Configures the server performance tier.
-- storage-auto-grow: Automatically increases storage as needed.
-- high-availability: Enables or disables regional HA.
-- public-access: Allows or restricts public connections.
-
-You can learn more about the parameters here: https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/quickstart-create-server?tabs=cli-create-flexible%2Cportal-get-connection%2Cportal-delete-resources
-
 When prompted to add your client IP address, type **y**:
 `Detected current client IP : 20.83.210.238
 Do you want to enable access to client 20.83.210.238 (y/n):`
@@ -155,6 +135,7 @@ psql "sslmode=require host=$env:postgresServer.postgres.database.azure.com user=
 First, ensure you have the necessary Azure Python SDK packages and Azure Developer CLI installed by running the following command in the terminal:
 
 ```python
+choco install winget
 pip install azure-mgmt-datafactory azure-identity
 winget install microsoft.azd
 ```
