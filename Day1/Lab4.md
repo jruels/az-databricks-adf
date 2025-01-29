@@ -5,7 +5,7 @@ Below are detailed instructions to replicate Labs 1, 2, and 3 via Python noteboo
 - Azure CLI (invoked from a notebook)  (You can check if it's installed by running `az --version`)
 - Jupyter or any IPython-based environment  
 
-> **Tip:** If you do not have Python or Jupyter installed, see [Python Downloads](https://www.python.org/downloads/) and install Jupyter via `pip install jupyter` Make sure to add python to the PATH environment variable during installation.
+> **Tip:** If you do not have Python or Jupyter installed, see [Python Downloads](https://www.python.org/downloads/) and install Jupyter via `pip install jupyter` Make sure to check the checkbox on the first install screen to add python to the PATH environment variable.  Choose customize installation to make sure pip is installed.
 
 ---
 ## 1. Set Up Your Development Environment
