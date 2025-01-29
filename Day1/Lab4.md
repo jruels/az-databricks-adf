@@ -128,7 +128,7 @@ psql "sslmode=require host=$env:postgresServer.postgres.database.azure.com user=
 
 1.  **Python 3.x:** You need Python 3 installed on your system.
 2.  **Azure CLI:** The Azure CLI must be installed and you must be logged in with `az login`.
-3.  **Jupyter/IPython:**  You should be working in a Jupyter notebook environment or similar.
+3.  **Jupyter/IPyKernel in VS Code:**  You should be working in a Jupyter notebook environment or similar such IPyKernel in VS Code.
 
 **Python Package Installation**
 
@@ -145,9 +145,10 @@ winget install microsoft.azd
 This section will replace the manual steps in the original lab instructions with Python code to create a pipeline within ADF.
 
 1. Open a terminal (on Windows, “Command Prompt” or “PowerShell”).  
-2. Run `jupyter notebook` or open your notebook in VS Code.
-3. Create a new Notebook and give it a name
-4. Add the code below to your notebook cells
+2. Run `jupyter notebook` or open VS Code.
+3. Create a new Notebook and give it a name. If you are using VS Code, you can create a new file with the `.ipynb` extension in your solution directory.
+4. **NOTE:** VS Code might prompt you to install python extensions and IPyKernel in order to run the notebook successfully. 
+5. Add the code below to your notebook cells
 
 ```python
 from azure.identity import DefaultAzureCredential
