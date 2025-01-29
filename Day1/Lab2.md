@@ -10,7 +10,7 @@ Create a simple Azure Data Factory pipeline that copies data from an Azure Stora
 **Detailed Steps:**
 1. **Create a Storage Account (in the Lab1 Resource Group):**
    - In the Azure portal, search for "Storage accounts," select "+ Create," use the same resource group from Lab1, and provide a unique name.  
-   - Choose region/replication, then click "Review + Create" → "Create."  
+   - Choose region/redundancy, then click "Review + Create" → "Create." (For low cost choose - Locally Redundant Storage)
    - Click "Go to Resource" to navigate to the storage account.
    - Go to "Data storage" then click on "Containers". Create a container (e.g., "inputcontainer") to store the data file (CSV or JSON). 
    - Create a new csv file `lab2data.csv ` and paste the following text:
@@ -49,10 +49,10 @@ id,name,value
 ```
     - Copy the lab2data.csv file and upload it to the inputcontainer
 2. **Create an Azure Database for PostgreSQL (in the Lab1 Resource Group):**
-   - Search for " Azure Database for PostgreSQL Flexible server," select "+ Create" and choose "Single server" (or "Flexible server").  
-   - Assign the same resource group from Lab1, provide server name, admin username, password, location, and pricing tier.  
+   - Search for " Azure Database for PostgreSQL Flexible server," select "+ Create".  
+   - Assign the same resource group from Lab1, provide server name, admin username, password, location, and select "Development" for workload type.  
    - Select "PostgreSQL authentication only" for Authentication method
-   - Go to the Networking tab and Allow public access, add your current client IP address to the firewall
+   - Go to the Networking tab and Allow public access, and also check `Allow public access from any Azure service within Azure to this server` to add your current client IP address to the firewall
    - After creation, you can also enable access by configuring firewall rules under "Connection security."
    - **The process can take several minutes so please be patient** If the server takes way too long to create, try recreating it in a different Azure Region.
    - Click "Go to Resource" to open the database overview page
