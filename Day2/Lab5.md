@@ -54,9 +54,9 @@ The goal is to:
 4. Right click on the "analytics" database and open the Query Tool and run the query below to create a table 
    ```sql
    CREATE TABLE transformed_data (
-       region VARCHAR(100),
-       avg_happiness_score FLOAT,
-       total_population BIGINT
+       Region VARCHAR(100),
+       AvgHappinessScore FLOAT,
+       TotalPopulation BIGINT
    );
    ```
 
