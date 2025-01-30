@@ -137,9 +137,8 @@ The goal is to:
 ---
 
 #### 5. **Join the Data**
-1. Add a **Join** transformation onto the canvas and connect it to `FilteredHappiness` as the Left Stream and `PopulationData` as the Right Stream.
-2. You can a a transformation by clicking the "+" button on the `FilteredHappiness` filter.
-3. Configure the join:
+1. Add a **Join** transformation onto the canvas and connect it to `FilteredHappiness` as the Left Stream and `PopulationData` as the Right Stream. You can a a transformation by clicking the "+" button on the `FilteredHappiness` filter.
+2. Configure the join:
    - **Join Condition**: Match `Country` in both datasets.
    - **Join Type**: Inner join.
    - Rename it to `JoinedData`.
@@ -148,8 +147,9 @@ The goal is to:
 
 #### 6. **Aggregate Data**
 1. Add a **Cast** transformation to the `JoinedData` transformation to convert the Happiness_Score and Population columns to the float and integer data types respectively.
-2. Add an **Aggregate** transformation:
-   - Connect it to `JoinedData`.
+2. Name it `CastedData`
+3. Add an **Aggregate** transformation:
+   - Connect it to `CastedData`.
    - Configure the aggregations:
      - **Group By**: `Region`.
      - **Aggregates**:
