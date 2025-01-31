@@ -51,6 +51,11 @@ Below is the ARM template you will use to deploy your Azure resources. This temp
       }
     }
   },
+  "variables": {
+    "dataFactoryLinkedServiceName": "AzureBlobLinkedService",
+    "happinessDatasetIn": "happinessDatasetIn",
+    "happinessDatasetOut": "happinessDatasetOut"
+  },
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
@@ -77,9 +82,23 @@ Below is the ARM template you will use to deploy your Azure resources. This temp
       }
     },
     {
+      "type": "Microsoft.DataFactory/factories/linkedservices",
+      "apiVersion": "2018-06-01",
+      "name": "[format('{0}/{1}', parameters('dataFactoryName'), variables('dataFactoryLinkedServiceName'))]",
+      "properties": {
+        "type": "AzureBlobStorage",
+        "typeProperties": {
+          "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2023-01-01').keys[0].value)]"
+        }
+      }
+    },
+    {
       "type": "Microsoft.DataFactory/factories/datasets",
       "apiVersion": "2018-06-01",
-      "name": "[format('{0}/happinessDatasetIn', parameters('dataFactoryName'))]",
+      "name": "[format('{0}/{1}', parameters('dataFactoryName'), variables('happinessDatasetIn'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DataFactory/factories/linkedservices', parameters('dataFactoryName'), variables('dataFactoryLinkedServiceName'))]"
+      ],
       "properties": {
         "linkedServiceName": {
           "referenceName": "[variables('dataFactoryLinkedServiceName')]",
@@ -97,9 +116,35 @@ Below is the ARM template you will use to deploy your Azure resources. This temp
       }
     },
     {
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "name": "[format('{0}/{1}', parameters('dataFactoryName'), variables('happinessDatasetOut'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DataFactory/factories/linkedservices', parameters('dataFactoryName'), variables('dataFactoryLinkedServiceName'))]"
+      ],
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "[variables('dataFactoryLinkedServiceName')]",
+          "type": "LinkedServiceReference"
+        },
+        "type": "Binary",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "container": "[parameters('blobContainerName')]",
+            "folderPath": "output"
+          }
+        }
+      }
+    },
+    {
       "type": "Microsoft.DataFactory/factories/pipelines",
       "apiVersion": "2018-06-01",
-      "name": "[format('{0}/CopyHappinessPipeline', parameters('dataFactoryName'))]",
+      "name": "[format('{0}/{1}', parameters('dataFactoryName'), 'CopyHappinessPipeline')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DataFactory/factories/datasets', parameters('dataFactoryName'), variables('happinessDatasetIn'))]",
+        "[resourceId('Microsoft.DataFactory/factories/datasets', parameters('dataFactoryName'), variables('happinessDatasetOut'))]"
+      ],
       "properties": {
         "activities": [
           {
@@ -121,13 +166,13 @@ Below is the ARM template you will use to deploy your Azure resources. This temp
               },
               "inputs": [
                 {
-                  "referenceName": "[format('{0}/happinessDatasetIn', parameters('dataFactoryName'))]",
+                  "referenceName": "[variables('happinessDatasetIn')]",
                   "type": "DatasetReference"
                 }
               ],
               "outputs": [
                 {
-                  "referenceName": "[format('{0}/happinessDatasetOut', parameters('dataFactoryName'))]",
+                  "referenceName": "[variables('happinessDatasetOut')]",
                   "type": "DatasetReference"
                 }
               ]
@@ -138,6 +183,7 @@ Below is the ARM template you will use to deploy your Azure resources. This temp
     }
   ]
 }
+
 ```
 
 ### Steps to Deploy the Template
