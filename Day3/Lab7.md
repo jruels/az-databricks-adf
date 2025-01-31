@@ -93,33 +93,33 @@ Once the service connection is created, you can reference it in your pipeline YA
    - Use the following YAML to create a build pipeline:
 
      ```yaml
-        trigger:
-        branches:
-            include:
-            - main
+trigger:
+  branches:
+    include:
+      - main
 
-        pool:
-        vmImage: 'windows-latest'
+pool:
+  vmImage: 'windows-latest'
 
-        steps:
-        - task: UseDotNet@2
-        inputs:
-            packageType: sdk
-            version: '3.1.x'
-            installationPath: $(Agent.ToolsDirectory)/dotnet
+steps:
+  - task: UseDotNet@2
+    inputs:
+      packageType: sdk
+      version: '3.1.x'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
 
-        - task: AzureCLI@2
-        inputs:
-            azureSubscription: 'MyAzureServiceConnection'
-            scriptType: 'ps'
-            scriptLocation: 'inlineScript'
-            inlineScript: |
-            az datafactory pipeline create --resource-group rg-adf-james -factory-name adf-james --name "MyPipeline" --output $(Build.ArtifactStagingDirectory)/adf/adf-pipeline.json
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: 'MyAzureServiceConnection'
+      scriptType: 'ps'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az datafactory pipeline create --resource-group rg-adf-<your name> --factory-name adf-<your name> --name "MyPipeline" --output $(Build.ArtifactStagingDirectory)/adf/adf-pipeline.json
 
-        - task: PublishBuildArtifacts@1
-        inputs:
-            PathtoPublish: '$(Build.ArtifactStagingDirectory)/adf'
-            ArtifactName: 'adf-pipeline'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/adf'
+      ArtifactName: 'adf-pipeline'
      ```
 
 4. **Save and Run the Pipeline**:
