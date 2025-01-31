@@ -89,7 +89,7 @@ Once the service connection is created, you can reference it in your pipeline YA
    - Select the source branch (`main` or collaboration branch).
 
 3. **Configure the Build Pipeline**:
-   - Choose **Starter Pipeline** or **Existing YAML**.
+   - Choose **Starter Pipeline**.
    - Use the following YAML to create a build pipeline:
 
 ```yaml
