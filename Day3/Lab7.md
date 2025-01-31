@@ -72,8 +72,8 @@ To find or create the Azure service connection (`azureSubscription`) in Azure De
 6. **Create the Service Connection**:
    - Click **Save** to create the service connection.
 
-7. **Install self-hosted agent**: 
-Follow the [here](https://github.com/jruels/az-databricks-adf/blob/main/Day3/windows_agent.md) to install the agent on your Windows VM.
+7. **Install self-hosted agent**:    
+Follow the instructions [here](https://github.com/jruels/az-databricks-adf/blob/main/Day3/windows_agent.md) to install the agent on your Windows VM.
 
 ### **Using the Service Connection in Your Pipeline**
 
