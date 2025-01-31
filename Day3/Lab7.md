@@ -92,7 +92,7 @@ Once the service connection is created, you can reference it in your pipeline YA
    - Choose **Starter Pipeline** or **Existing YAML**.
    - Use the following YAML to create a build pipeline:
 
-     ```yaml
+```yaml
 trigger:
   branches:
     include:
@@ -120,7 +120,8 @@ steps:
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)/adf'
       ArtifactName: 'adf-pipeline'
-     ```
+    
+```
 
 4. **Save and Run the Pipeline**:
    - Click **Save and Run** to save and test the pipeline.
