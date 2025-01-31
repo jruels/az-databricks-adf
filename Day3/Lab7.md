@@ -102,7 +102,7 @@ trigger:
       - main
 
 pool:
-  vmImage: 'windows-latest'
+  name: Default 
 
 steps:
   - task: UseDotNet@2
